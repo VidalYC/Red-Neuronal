@@ -1,0 +1,3 @@
+Número de capas ocultas: 1
+Número de neuronas para la capa 1: 3, Activación: tanh
+Número de salidas para la capa salida: 2, Activación: tanh

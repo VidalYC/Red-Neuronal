@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jersey+10&display=swap');
+       
+       * {
+           padding: 0;
+           margin: 0;
+           box-sizing: border-box;
+           
+       }
+
+       .container {
+           position: relative;
+           width: 100%;
+           height: 100vh;
+           overflow: hidden;
+       }
+       
+       
+       #particles-js {
+           position: absolute;
+           width: 100%;
+           height: 100%;
+           background-color: #030427;
+           z-index: -1;
+       }
+
+       
+       .content {
+           position: absolute;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+           text-align: center;
+           color: #fff;
+           background-color: rgba(255, 255, 255, 0.1);
+           backdrop-filter: blur(10px);
+           border-radius: 10px;
+           padding: 20px;
+           font-family: "Jersey 10", sans-serif;
+           font-weight: 400;
+           font-style: normal;
+       }
+
+       .esquema{
+        position: absolute;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+           text-align: center;
+           color: #fff;
+           background-color: rgba(255, 255, 255, 0.1);
+           backdrop-filter: blur(10px);
+           border-radius: 10px;
+           padding: 20px;
+           font-family: "Jersey 10", sans-serif;
+           font-weight: 400;
+           font-style: normal;
+       }
+       
+       form {
+           margin-top: 20px;
+       }
+
+       input[type="number"],
+        select {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        /* Estilos específicos para el botón de enviar */
+        input[type="submit"] {
+            background-color: #4c93af;
+            color: white;
+            padding: 13px 20px;
+            border: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        /* Estilos específicos para el select */
+        select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            }
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4c93af; /* Cambia el color del borde cuando el input está enfocado */
+        }
+        .neuronas-inputs {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .neuronas-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .neuronas-input label {
+            margin-right: 10px;
+        }
+
+        .neuronas-input input[type="number"],
+        .neuronas-input select {
+            flex: 1;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        .capans{
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .capans label{
+            margin-right: 30px;
+        }
+
+        .capans input[type="number"],
+        .capans select {
+            flex: 1;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="particles-js"></div> 
+        <div class="esquema">
+        
+        </div>
+        <div class="content">
+
+            <h1>Carga Exitosa</h1>
+            <p>Número de entradas: {{ num_entradas }}</p>
+            <p>Número de salidas: {{ num_salidas }}</p>
+            <p>Número de patrones: {{ num_patrones }}</p>
+            <p>Matriz:</p>
+            <pre>{{ matriz }}</pre>
+
+            
+            <form id="neuronasForm" action="/guardar_datos" method="post" onsubmit="return validarFormulario()">
+                <label for="capas">Selecciona el número de capas ocultas:</label>
+                <select id="capas" name="capas" onchange="habilitarNeuronas()">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+
+                <!-- Dentro del formulario -->
+                <div class="neuronas-inputs">
+                    <!-- Para la capa 1 -->
+                    <div class="neuronas-input">
+                        <label for="neuronas1">Número de neuronas para la capa 1:</label>
+                        <input type="number" id="neuronas1" name="neuronas1" min="{{ num_entradas }}" required>
+                        <select id="activacion1" name="activacion1">
+                            <option value="tanh">Tangente hiperbólica</option>
+                            <option value="sigmoid">Sigmoidal</option>
+                            <option value="sin">Seno</option>
+                            
+                        </select>
+                    </div>
+                    <!-- Para la capa 2 -->
+                    <div class="neuronas-input">
+                        <label for="neuronas2">Número de neuronas para la capa 2:</label>
+                        <input type="number" id="neuronas2" name="neuronas2" min="1" disabled>
+                        <select id="activacion2" name="activacion2" disabled>
+                            <option value="tanh">Tangente hiperbólica</option>
+                            <option value="sigmoid">Sigmoidal</option>
+                            <option value="sin">Seno</option>
+                            
+                        </select>
+                    </div>
+                    <!-- Para la capa 3 -->
+                    <div class="neuronas-input">
+                        <label for="neuronas3">Número de neuronas para la capa 3:</label>
+                        <input type="number" id="neuronas3" name="neuronas3" min="1" disabled>
+                        <select id="activacion3" name="activacion3" disabled>
+                            <option value="tanh">Tangente hiperbólica</option>
+                            <option value="sigmoid">Sigmoidal</option>
+                            <option value="sin">Seno</option>  
+                        </select>
+                    </div>
+                    <div class="capans">
+                        <label for="salida">Capa de Salida:</label>
+                        <input type="number" id="nSalida" name="nSalida" min="1" value="{{ num_salidas }}" style="display: none;">
+                        <select id="activacionSalida" name="activacionSalida">
+                            <option value="tanh">Tangente hiperbólica</option>
+                            <option value="sigmoid">Sigmoidal</option>
+                            <option value="sin">Seno</option>
+                            <option value="lin">Lineal</option>
+                        </select>
+                    </div>
+                </div>
+                
+
+                
+
+                <input type="submit" value="Enviar">
+            </form>
+        
+    
+        </div>
+        
+        <div class="cont2">
+            <div class="esquema"></div>
+            <div class="pyu"></div>
+        </div>
+    
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#ffffff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    },
+                    "image": {
+                        "src": "img/github.svg",
+                        "width": 100,
+                        "height": 100
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#ffffff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 6,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "repulse"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 400,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+
+        function habilitarNeuronas() {
+            var capas = parseInt(document.getElementById("capas").value);
+            var neuronasInputs = document.querySelectorAll(".neuronas-input input[type='number']");
+            var activacionSelects = document.querySelectorAll(".neuronas-input select");
+
+            // Validar condiciones para cada capa
+            for (var i = 0; i < neuronasInputs.length; i++) {
+                if (i === 0) {
+                    // Capa 1: El número de neuronas debe ser mayor o igual al número de entradas
+                    var numEntradas = parseInt("{{ num_entradas }}");
+                    neuronasInputs[i].min = numEntradas; // Establecer el mínimo
+                    if (parseInt(neuronasInputs[i].value) < numEntradas) {
+                        // Si el valor actual es menor que el número de entradas, ajustarlo
+                        neuronasInputs[i].value = numEntradas;
+                    }
+                } else {
+                    // Capa 2 y Capa 3: El número de neuronas debe ser mayor que cero
+                    if (parseInt(neuronasInputs[i].value) < 0) {
+                        alert("No se aceptan valores iguales o menores a 0 para el número de neuronas en la capa " + (i + 1));
+                        // Si el valor actual es cero o negativo, ajustarlo
+                        neuronasInputs[i].value = "";
+                        return;
+                    }
+                }
+
+                // Habilitar o deshabilitar las entradas y selectores de activación según el número de capas seleccionado
+                if (i < capas) {
+                    neuronasInputs[i].disabled = false;
+                    activacionSelects[i].disabled = false;
+                } else {
+                    neuronasInputs[i].disabled = true;
+                    activacionSelects[i].disabled = true;
+                    neuronasInputs[i].value = "";
+                }
+                
+            }
+            document.querySelector(".capans select").disabled = false;
+}
+
+
+        function validarFormulario() {
+            var neuronasInputs = document.getElementById("neuronas").getElementsByTagName("input");
+            var activacionSelects = document.getElementById("neuronas").getElementsByTagName("select");
+
+            // Verificar que se haya seleccionado una función de activación para cada capa
+            for (var i = 0; i < neuronasInputs.length; i++) {
+                if (parseInt(neuronasInputs[i].value) > 0 && activacionSelects[i].value === "") {
+                    alert("Debe seleccionar una función de activación para la capa " + (i + 1));
+                    return false; // Evitar el envío del formulario
+                }
+            }
+
+            alert("Done");
+            return true; // Permitir el envío del formulario
+        }
+
+    </script>
+</body>
+</html>
