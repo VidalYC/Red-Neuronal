@@ -1,3 +1,6 @@
-Número de capas ocultas: 1
+Número de capas ocultas: 3
 Número de neuronas para la capa 1: 3, Activación: tanh
+Número de neuronas para la capa 2: 2, Activación: tanh
+Número de neuronas para la capa 3: 4, Activación: tanh
 Número de salidas para la capa salida: 2, Activación: tanh
+MATRIZ [[[0.3, 0.6, 0.4], [-0.3, -0.4, 0.5], [-0.0, 0.8, -1.0]], [[0.7, -0.0], [0.0, -0.3], [0.0, -0.7]], [[-0.3, 0.3, -0.1, -0.6], [-0.6, -0.3, 0.8, 0.2]], [[0.4, -0.5], [-0.4, 0.8], [0.2, 0.6], [-0.0, 0.8]]]

@@ -12,57 +12,80 @@
            padding: 0;
            margin: 0;
            box-sizing: border-box;
-           
        }
 
        .container {
-           position: relative;
-           width: 100%;
-           height: 100vh;
-           overflow: hidden;
+            flex-direction: row;
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex; /* Establecer el contenedor principal como flexbox */
+            justify-content: space-between; /* Distribuir los elementos con espacio entre ellos */
+            align-items: flex; /* Alinear los elementos en la parte superior */
+            padding: 0;
+            margin: 0;
+            overflow-x: auto;
        }
        
        
        #particles-js {
-           position: absolute;
-           width: 100%;
-           height: 100%;
-           background-color: #030427;
-           z-index: -1;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background-color: #030427;
+        z-index: -1;
+        top: 0; /* Asegura que el fondo se ajuste a la parte superior */
+        left: 0; /* Asegura que el fondo se ajuste a la parte izquierda */
+        bottom: 0; /* Ajusta el fondo a la parte inferior */
+        right: 0;
        }
 
        
        .content {
-           position: absolute;
-           top: 50%;
-           left: 50%;
-           transform: translate(-50%, -50%);
-           text-align: center;
-           color: #fff;
-           background-color: rgba(255, 255, 255, 0.1);
-           backdrop-filter: blur(10px);
-           border-radius: 10px;
-           padding: 20px;
-           font-family: "Jersey 10", sans-serif;
-           font-weight: 400;
-           font-style: normal;
+            margin-right: 0px;
+            position: relative;
+            top: 50%;   
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: "Jersey 10", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            margin-bottom: 20px;
        }
 
-       .esquema{
-        position: absolute;
-           top: 50%;
-           left: 50%;
-           transform: translate(-50%, -50%);
-           text-align: center;
-           color: #fff;
-           background-color: rgba(255, 255, 255, 0.1);
-           backdrop-filter: blur(10px);
-           border-radius: 10px;
-           padding: 20px;
-           font-family: "Jersey 10", sans-serif;
-           font-weight: 400;
-           font-style: normal;
+       .cont{
+            /*margin-right: 800px;*/
+            /*flex: 1;*/
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: left;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: "Jersey 10", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            margin-bottom: 20px;
        }
+
+       #cont {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+    }
+
        
        form {
            margin-top: 20px;
@@ -148,7 +171,8 @@
         }
 
         .capans label{
-            margin-right: 30px;
+            margin-right: 10px;
+            padding-left: 44px;
         }
 
         .capans input[type="number"],
@@ -162,23 +186,32 @@
             font-size: 16px;
         }
 
+        .styled-text {
+            flex-direction: column;
+            font-family: "Jersey 10", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            color: #fffafa;
+            margin-bottom: 10px;
+    }
+
 
     </style>
 </head>
 <body>
     <div class="container">
         <div id="particles-js"></div> 
-        <div class="esquema">
-        
-        </div>
+
+        <div class="esquema"></div>
+
         <div class="content">
 
             <h1>Carga Exitosa</h1>
             <p>Número de entradas: {{ num_entradas }}</p>
             <p>Número de salidas: {{ num_salidas }}</p>
             <p>Número de patrones: {{ num_patrones }}</p>
-            <p>Matriz:</p>
-            <pre>{{ matriz }}</pre>
+            <!--<p>Matriz:</p>
+            <pre>{{ matriz }}</pre>-->
 
             
             <form id="neuronasForm" action="/guardar_datos" method="post" onsubmit="return validarFormulario()">
@@ -224,7 +257,7 @@
                         </select>
                     </div>
                     <div class="capans">
-                        <label for="salida">Capa de Salida:</label>
+                        <label for="salida">Funcion de la Capa de Salida:</label>
                         <input type="number" id="nSalida" name="nSalida" min="1" value="{{ num_salidas }}" style="display: none;">
                         <select id="activacionSalida" name="activacionSalida">
                             <option value="tanh">Tangente hiperbólica</option>
@@ -234,22 +267,16 @@
                         </select>
                     </div>
                 </div>
-                
 
-                
-
-                <input type="submit" value="Enviar">
+                <input type="submit" value="Guardar">
             </form>
         
-    
+        </div>
+
+        <div class="cont" id="cont">
+            
         </div>
         
-        <div class="cont2">
-            <div class="esquema"></div>
-            <div class="pyu"></div>
-        </div>
-    
-    </div>
 
     
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -362,8 +389,56 @@
                     }
                 }
             },
-            "retina_detect": true
         });
+
+        document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("neuronasForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe normalmente
+
+            // Envía los datos del formulario al servidor
+            fetch("/guardar_datos", {
+                method: "POST",
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Actualiza el contenido del div "cont" con los datos recibidos del servidor
+                var contenedor = document.getElementById("cont");
+                contenedor.innerHTML = ""; // Limpiar el contenido anterior
+                
+                if (data.num_capas_ocultas == 1) {
+                    contenedor.innerHTML += `<p class="styled-text">WEC1: ${num_entradas} x ${data.neuronas_capa1}</p>`;
+                    contenedor.innerHTML += `<p class="styled-text">WC1CS: ${data.neuronas_capa1} x ${num_salidas}</p>`;
+                } else if (data.num_capas_ocultas == 2) {
+                    contenedor.innerHTML += `<p class="styled-text">WEC1: ${num_entradas} x ${data.neuronas_capa1}</p>`;
+                    contenedor.innerHTML += `<p class="styled-text">WC1C2: ${data.neuronas_capa1} x ${data.neuronas_capa2}</p>`;
+                    contenedor.innerHTML += `<p class="styled-text">WC2CS: ${data.neuronas_capa2} x ${num_salidas}</p>`;
+                } else if (data.num_capas_ocultas == 3) {
+                    contenedor.innerHTML += `<p class="styled-text">WEC1: ${num_entradas} x ${data.neuronas_capa1}</p>`;
+                    contenedor.innerHTML += `<p class="styled-text">WC1C2: ${data.neuronas_capa1} x ${data.neuronas_capa2}</p>`;
+                    contenedor.innerHTML += `<p class="styled-text">WC2C3: ${data.neuronas_capa2} x ${data.neuronas_capa3}</p>`;
+                    contenedor.innerHTML += `<p class="styled-text">WC3CS: ${data.neuronas_capa3} x ${num_salidas}</p>`;
+                }
+
+                // Mostrar las matrices generadas
+                data.matrices.forEach(function(matriz, index) {
+                    var matrizHTML = "<div class='matrix'>";
+                    matriz.forEach(function(fila) {
+                        matrizHTML += "<div class='matrix-row'>";
+                        fila.forEach(function(valor) {
+                            matrizHTML += `<div class='matrix-cell'>${valor}</div>`;
+                        });
+                        matrizHTML += "</div>";
+                    });
+                    matrizHTML += "</div>";
+                    contenedor.innerHTML += matrizHTML;
+                });
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+
+
 
         function habilitarNeuronas() {
             var capas = parseInt(document.getElementById("capas").value);
